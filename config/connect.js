@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://mongo_api-zto:27017',{useNewUrlParser: true}).then().catch((err)=>{
-	console.log('Ocorreu um erro ao conectar ao banco');
+mongoose.connect('mongodb://kamino.mongodb.umbler.com:40611/api-zto',{useNewUrlParser: true}).then().catch((err)=>{
+   console.log('Ocorreu um erro ao conectar ao banco');
 });
 
 const userAdminSchema = new mongoose.Schema({
