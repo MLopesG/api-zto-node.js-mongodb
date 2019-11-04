@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/zto',{useNewUrlParser: true}).then().catch((err)=>{
+mongoose.connect('mongodb://api-zto:api-zto-mongo@kamino.mongodb.umbler.com:27017/api-zto',{useNewUrlParser: true}).then().catch((err)=>{
 	console.log('Ocorreu um erro ao conectar ao banco');
 });
 
