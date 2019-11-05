@@ -129,7 +129,7 @@ module.exports.delete = (req, res) => {
 					if (!result && err) {
 						res.status(417).json({
 							status: false,
-							message: 'Não foi possivel excluir categoria, tente novamente.'
+							message: 'Não foi possivel excluir simbolo, tente novamente.'
 						});
 					} else {
 						res.json({
@@ -155,7 +155,7 @@ module.exports.view = (req, res) => {
 		}else{
 			res.json({
 				status: true,
-				categoria: result
+				simbolos: result
 			});
 		}
 	}, filter);
@@ -190,7 +190,7 @@ module.exports.subCategorias = (req, res) => {
 		}else{
 			res.json({
 				status: true,
-				subcategoria: result
+				simbolos: result
 			});
 		}
 	},
