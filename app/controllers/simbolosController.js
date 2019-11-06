@@ -27,8 +27,6 @@ module.exports.add = (req, res) => {
 			"descricaoSimbolo": req.body.descricaoSimbolo,
 			"idCategoria": req.body.idCategoria,
 			"tituloSimbolo": req.body.tituloSimbolo,
-			"causasSimbolo": req.body.causasSimbolo,
-			"solucoesSimbolo":req.body.solucoesSimbolo,
 			"imagem": '/imagens/' + req.files.file.name
 		}
 
@@ -150,6 +148,7 @@ module.exports.view = (req, res) => {
 	simbolosModel.view(connectMongoSchemas.createSimbolos,(error,result) => {
 		if(error){
 			res.status(417).json({
+				status: false,
 				message: 'Falha ao listar simbolos.'
 			});
 		}else{
@@ -168,6 +167,7 @@ module.exports.search = (req, res) => {
 	simbolosModel.search(connectMongoSchemas.createSimbolos,(error,result) => {
 		if(error){
 			res.status(417).json({
+				status: false,
 				message: 'Falha ao listar simbolo.'
 			});
 		}else{
@@ -185,6 +185,7 @@ module.exports.subCategorias = (req, res) => {
 	simbolosModel.search(connectMongoSchemas.createSimbolos,(error,result) => {
 		if(error){
 			res.status(417).json({
+				status: false,
 				message: 'Falha ao listar subcategorias.'
 			});
 		}else{
@@ -196,4 +197,155 @@ module.exports.subCategorias = (req, res) => {
 	},
 		{'idCategoria':idCategoriaFilter}
 	);
+};
+
+module.exports.listSimbolos = (req,res)=>{
+	let idSimbolo = req.query.simbolo;
+	let tipoList = req.query.tipo;
+
+	if(!idSimbolo || !tipoList){
+		res.status(417).json({
+			status:false,
+			message: 'Querys não informadas.'
+		});
+		return;
+	}
+
+	simbolosModel.search(connectMongoSchemas.createlistSimbolos,(error,result) => {
+		if(error){
+			res.status(417).json({
+				status:false,
+				message: 'Falha buscar lista.'
+			});
+		}else{
+			res.json({
+				status: true,
+				listSimbolos: result
+			});
+		}
+	},
+		{'idSimbolo':idSimbolo,'tipoList':tipoList}
+	);
+}
+
+module.exports.addList = (req, res) => {
+	let { check, validationResult } = require('express-validator');
+	let errors = validationResult(req);
+
+	if (!errors.isEmpty()) {
+		res.status(417).json({
+			status: false,
+			validation: errors.array()
+		});
+	} else {
+		let simbolosList = {
+			"idSimbolo": req.body.idSimbolo,
+			"descSimbolo": req.body.descSimbolo,
+			"tipoList": req.body.tipoList
+		}
+
+		simbolosList = connectMongoSchemas.createlistSimbolos(simbolosList);
+
+		simbolosModel.add(simbolosList, (error,result) => {
+		
+		if (error) {
+				res.status(417).json({
+					status: false,
+					message: 'Falha ao cadastrar.'
+				});
+				return;
+			}
+			res.json({
+				status: true,
+				message: 'Simbolo foi cadastrada com sucesso.'
+			});
+		});
+	}
+};
+
+module.exports.deleteList = (req, res) => {
+	let paramsId = req.params.id;
+
+	if (!paramsId) {
+		res.status(417).json({
+			status: false,
+			message: 'Informe lista para continuar o processo de exclusão.'
+		});
+	} else {
+		simbolosModel.view(connectMongoSchemas.createlistSimbolos,(errorView,result) => {
+			if (errorView) {
+				res.status(417).json({
+					status: false,
+					message: 'Não foi possivel excluir lista, tente novamente.'
+				});
+				return;
+			}
+			simbolosModel.delete(connectMongoSchemas.createSimbolos,{"_id" : ObjectId(paramsId)},(error,result)=>{
+				if (!result && err) {
+					res.status(417).json({
+						status: false,
+						message: 'Não foi possivel excluir simbolo, tente novamente.'
+					});
+				} else {
+					res.json({
+						status: true,
+						message: 'Simbolo - lista foi excluida com sucesso.'
+					});
+				}
+			});
+		},{'_id': ObjectId(paramsId)});
+	}
+};
+
+module.exports.editList = (req, res) => {
+	let { check, validationResult } = require('express-validator');
+	let errors = validationResult(req);
+	let simbolosListEditId = req.params.id;
+
+	if (req.method === 'GET') {
+
+		if (!categoriaEditId) {
+			res.status(417).json({
+				status: false,
+				message: 'Simbolo não encontrada.'
+			});
+		} else {
+			simbolosModel.view(connectMongoSchemas.createlistSimbolos,(error,result) => {
+				if(error){
+					res.status(417).json({
+						status: false,
+						message: 'Simbolo - lista não encontrada.'
+					});
+				}else{
+					res.json({
+						status: true,
+						listaSimbolo: result
+					});
+				}
+			},
+				{'_id': ObjectId(simbolosListEditId)}
+			);
+		}
+	} else {
+		if (!errors.isEmpty()) {
+			res.status(417).json({
+				status: false,
+				validation: errors.array()
+			});
+		} else {
+			simbolosModel.edit(connectMongoSchemas.createlistSimbolos,{'_id': ObjectId(simbolosListEditId)}, req.body,(error,result)=>{
+				if (error) {
+					res.status(417).json({
+						status: false,
+						message: 'Não foi possivel realizar alteração, tente novamente.'
+					});
+				} else {
+					res.json({
+						status: true,
+						message: 'Simbolo - lista editada com sucesso'
+					});
+				}
+			},{'_id': ObjectId(simbolosListEditId)});
+		}
+	}
 };

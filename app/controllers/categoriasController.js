@@ -165,6 +165,7 @@ module.exports.search = (req, res) => {
 	categoriaModel.search(connectMongoSchemas.createCategorias,(error,result) => {
 		if(error){
 			res.status(417).json({
+				status: false,
 				message: 'Falha ao listar usuário.'
 			});
 		}else{

@@ -215,6 +215,7 @@ module.exports.view = (req, res) => {
 	usersModel.view(connectMongoSchemas.createUsers,(error,result) => {
 		if(error){
 			res.status(417).json({
+				status: false,
 				message: 'Falha ao listar usuário.'
 			});
 		}else{

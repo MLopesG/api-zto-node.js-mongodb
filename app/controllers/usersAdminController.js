@@ -71,7 +71,7 @@ module.exports.login = (req, res) => {
 				} else {
 					let userLogin = {
 						id: user.key,
-						nome: user.email
+						email: user.email
 					};
 
 					let token = jwt.sign(userLogin, config.secret);
@@ -112,6 +112,7 @@ module.exports.add = (req, res) => {
 				usersModel.add(user, (error,result) => {
 					if(error){
 						res.status(417).json({
+							status: false,
 							message: 'Falha ao realizar processo no firebase, tente novamente.'
 						});
 					}else{
@@ -215,6 +216,7 @@ module.exports.view = (req, res) => {
 	usersModel.view(connectMongoSchemas.createUserAdmin,(error,result) => {
 		if(error){
 			res.status(417).json({
+				status: false,
 				message: 'Falha ao listar usuário.'
 			});
 		}else{

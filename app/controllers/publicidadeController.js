@@ -148,12 +148,13 @@ module.exports.view = (req, res) => {
 	categoriaModel.view(connectMongoSchemas.createPublicidades,(error,result) => {
 		if(error){
 			res.status(417).json({
+				status: false,
 				message: 'Falha ao listar publicidade.'
 			});
 		}else{
 			res.json({
 				status: true,
-				categoria: result
+				publicidades: result
 			});
 		}
 	}, filter);

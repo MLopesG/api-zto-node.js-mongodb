@@ -76,14 +76,19 @@ const simbolosSchema = new mongoose.Schema({
 	tituloSimbolo:{
 		type : String,
 		require: true,
+	}});
+const listSimbolos = new mongoose.Schema({
+	idSimbolo:{
+		type:String,
+		require:true
 	},
-	causasSimbolo:{
-		type : Array,
-		require: true,
+	descSimbolo:{
+		type:String,
+		require:true 
 	},
-	solucoesSimbolo:{
-		type : Array,
-		require: true,
+	tipoList:{
+		type:String,
+		require:true 
 	}});
 
 const createUserAdmin = mongoose.model('UserAdmin', userAdminSchema);
@@ -91,11 +96,13 @@ const createUsers = mongoose.model('Users', usersSchema);
 const createPublicidades = mongoose.model('Publicidades', publicidadesSchema);
 const createCategorias = mongoose.model('Categorias', categoriasSchema);
 const createSimbolos = mongoose.model('Simbolos', simbolosSchema);
+const createlistSimbolos = mongoose.model('ListSimbolos', listSimbolos);
 
 module.exports = {
 	createUserAdmin,
 	createUsers,
 	createPublicidades,
 	createCategorias,
-	createSimbolos
+	createSimbolos,
+	createlistSimbolos
 };
