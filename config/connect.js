@@ -20,18 +20,26 @@ const usersSchema = new mongoose.Schema({
 	},
 	empresa:{
 		type : String,
-		require: true,
+		require: false,
 	},
 	marcaVeiculo:{
 		type : String,
-		require: true,
+		require: false,
 	},
 	tipoVeiculo:{
 		type : String,
-		require: true,
+		require: false,
 	},
 	nomeCompleto:{
 		type : String,
+		require: true,
+	},
+	email:{
+		type:String,
+		require:true
+	},
+	telefone:{
+		type:String,
 		require: true,
 	},
 	senha:{

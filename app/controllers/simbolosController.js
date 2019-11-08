@@ -176,7 +176,7 @@ module.exports.search = (req, res) => {
 				simbolos: result
 			});
 		}
-	}, {tituloSimbolo:search});
+	}, {tituloSimbolo:{'$regex': search}});
 };
 
 module.exports.subCategorias = (req, res) => {

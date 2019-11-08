@@ -174,5 +174,5 @@ module.exports.search = (req, res) => {
 				categoria: result
 			});
 		}
-	}, {categoria:search});
+	}, {categoria:{'$regex': search}});
 };
