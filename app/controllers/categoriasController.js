@@ -89,7 +89,7 @@ module.exports.edit = (req, res) => {
 		} else {
 			categoriaModel.edit(connectMongoSchemas.createCategorias,{'_id': ObjectId(categoriaEditId)}, req.body,(error,result)=>{
 				if (error) {
-					res.status(417).json({
+					res.json({
 						status: false,
 						message: 'Não foi possivel realizar alteração, tente novamente.'
 					});

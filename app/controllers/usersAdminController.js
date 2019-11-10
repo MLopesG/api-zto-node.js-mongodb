@@ -169,7 +169,7 @@ module.exports.edit = (req, res) => {
 
 			usersModel.edit(connectMongoSchemas.createUserAdmin,{"_id": ObjectId(userEditId)},req.body,(error,result)=>{
 				if (error) {
-					res.status(417).json({
+					res.json({
 						status: false,
 						message: 'Não foi possivel realizar alteração, tente novamente.'
 					});
