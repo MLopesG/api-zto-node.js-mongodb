@@ -28,7 +28,7 @@ router.post('/cadastrar',
 
 router.post('/search',
 	[
-		check('search', 'Pesquisa é obrigatório').not().isEmpty(),
+		check('search', 'Pesquisa é obrigatório').not().isEmpty()
 	],
 	controllerSimbolos.search
 );

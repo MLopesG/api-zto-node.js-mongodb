@@ -70,7 +70,7 @@ module.exports.login = (req, res) => {
 					});
 				} else {
 					let userLogin = {
-						id: user.key,
+						id: user._id,
 						nome: user.nomeCompleto
 					};
 
