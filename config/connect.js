@@ -1,8 +1,15 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://7b49bc94885c64e315df897fbad0782b:99510796@9b.mongo.evennode.com:27017/7b49bc94885c64e315df897fbad0782b',{useNewUrlParser: true}).then().catch((err)=>{
-	console.log('Ocorreu um erro ao conectar ao banco');
+mongoose.connect("mongodb+srv://lopes:seLFpUdFLADo6iof@zto-3qqp7.mongodb.net/test?retryWrites=true&w=majority",{
+		useNewUrlParser: true,
+		useUnifiedTopology: true
+	}).then().catch((err)=>{
+	console.log('Ocorreu um erro ao conectar ao banco')
 });
+
+// mongoose.connect('mongodb://localhost:27017/zto',{useNewUrlParser: true}).then().catch((err)=>{
+// 	console.log('Ocorreu um erro ao conectar ao banco');
+// });
 
 const userAdminSchema = new mongoose.Schema({
 	email:{
@@ -15,20 +22,20 @@ const userAdminSchema = new mongoose.Schema({
 	}});
 const usersSchema = new mongoose.Schema({
 	cpf:{
-		type:Number,
+		type:String,
 		require:true
 	},
 	empresa:{
 		type : String,
-		require: false,
+		require: true,
 	},
 	marcaVeiculo:{
 		type : String,
-		require: false,
+		require: true,
 	},
 	tipoVeiculo:{
 		type : String,
-		require: false,
+		require: true,
 	},
 	nomeCompleto:{
 		type : String,

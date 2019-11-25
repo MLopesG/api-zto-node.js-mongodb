@@ -22,18 +22,19 @@ module.exports.add = (req, res) => {
 			});
 			return;
 		}
+		let urlNew = new Date().getTime() + req.files.file.name;
 
 		let simbolos = {
 			"descricaoSimbolo": req.body.descricaoSimbolo,
 			"idCategoria": req.body.idCategoria,
 			"tituloSimbolo": req.body.tituloSimbolo,
-			"imagem": '/imagens/' + req.files.file.name
+			"imagem": '/imagens/' + urlNew
 		}
 
 		simbolos = connectMongoSchemas.createSimbolos(simbolos);
 
 		simbolosModel.add(simbolos, (error,result) => {
-			req.files.file.mv('app/public/imagens/' + req.files.file.name, (err) => {
+			req.files.file.mv('app/public/imagens/' + urlNew, (err) => {
 				if (err || error) {
 					res.status(417).json({
 						status: false,
@@ -97,10 +98,10 @@ module.exports.edit = (req, res) => {
 				} else {
 					res.json({
 						status: true,
-						message: 'Simbolo editada com sucesso'
+						message: 'Simbolo editado com sucesso'
 					});
 				}
-			},{'_id': ObjectId(simbolosEditId)});
+			});
 		}
 	}
 };
@@ -122,7 +123,7 @@ module.exports.delete = (req, res) => {
 				});
 				return;
 			}
-			fs.unlink('./app/public' + result.imagem, (err) => {
+			fs.unlink('./app/public' + result[0].imagem, (err) => {
 				simbolosModel.delete(connectMongoSchemas.createSimbolos,{"_id" : ObjectId(paramsId)},(error,result)=>{
 					if (!result && err) {
 						res.status(417).json({
@@ -135,9 +136,23 @@ module.exports.delete = (req, res) => {
 							message: 'Simbolo foi excluida com sucesso.'
 						});
 					}
+					});
 				});
-			});
 		},{'_id': ObjectId(paramsId)});
+
+		simbolosModel.delete(connectMongoSchemas.createlistSimbolos,{"idSimbolo" : paramsId},(errorList,result)=>{
+			if (!result && errorList) {
+				res.status(417).json({
+					status: false,
+					message: 'Não foi possivel excluir simbolo, tente novamente.'
+				});
+			} else {
+				res.json({
+					status: true,
+					message: 'Lista de simbolos foi excluida com sucesso.'
+				});
+			}
+		});
 	}
 };
 
@@ -203,11 +218,21 @@ module.exports.listSimbolos = (req,res)=>{
 	let idSimbolo = req.query.simbolo;
 	let tipoList = req.query.tipo;
 
-	if(!idSimbolo || !tipoList){
-		res.status(417).json({
-			status:false,
-			message: 'Querys não informadas.'
-		});
+	if(idSimbolo && !tipoList){
+		simbolosModel.view(connectMongoSchemas.createlistSimbolos,(error,result)=>{
+			if(error){
+				res.status(417).json({
+					status:false,
+					message: 'Falha buscar lista.'
+				});
+			}else{
+				res.json({
+					status: true,
+					listSimbolos: result
+				});
+			}
+		},{'idSimbolo':idSimbolo});
+
 		return;
 	}
 
@@ -238,6 +263,7 @@ module.exports.addList = (req, res) => {
 			validation: errors.array()
 		});
 	} else {
+		
 		let simbolosList = {
 			"idSimbolo": req.body.idSimbolo,
 			"descSimbolo": req.body.descSimbolo,
@@ -272,28 +298,19 @@ module.exports.deleteList = (req, res) => {
 			message: 'Informe lista para continuar o processo de exclusão.'
 		});
 	} else {
-		simbolosModel.view(connectMongoSchemas.createlistSimbolos,(errorView,result) => {
-			if (errorView) {
+		simbolosModel.delete(connectMongoSchemas.createlistSimbolos,{"_id" : ObjectId(paramsId)},(error,result)=>{
+			if (!result && err) {
 				res.status(417).json({
 					status: false,
-					message: 'Não foi possivel excluir lista, tente novamente.'
+					message: 'Não foi possivel excluir simbolo, tente novamente.'
 				});
-				return;
+			} else {
+				res.json({
+					status: true,
+					message: 'Simbolo - lista foi excluida com sucesso.'
+				});
 			}
-			simbolosModel.delete(connectMongoSchemas.createSimbolos,{"_id" : ObjectId(paramsId)},(error,result)=>{
-				if (!result && err) {
-					res.status(417).json({
-						status: false,
-						message: 'Não foi possivel excluir simbolo, tente novamente.'
-					});
-				} else {
-					res.json({
-						status: true,
-						message: 'Simbolo - lista foi excluida com sucesso.'
-					});
-				}
-			});
-		},{'_id': ObjectId(paramsId)});
+		});
 	}
 };
 
@@ -342,10 +359,10 @@ module.exports.editList = (req, res) => {
 				} else {
 					res.json({
 						status: true,
-						message: 'Simbolo - lista editada com sucesso'
+						message: 'Simbolo - lista editado com sucesso'
 					});
 				}
-			},{'_id': ObjectId(simbolosListEditId)});
+			});
 		}
 	}
 };

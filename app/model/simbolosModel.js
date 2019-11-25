@@ -8,12 +8,16 @@ class Simbolos {
 	};
 
 	delete(schema,where,callback){
-	  	return schema.deleteOne(where,callback);
+	  	return schema.deleteMany(where,callback);
 	};
 
 	view(schema,callback,id = {}){
 		return schema.find(id).sort({_id: -1}).exec(callback);
 	};
+
+	all(schema,callback){
+		return schema.find(id).sort({_id: -1}).exec(callback);
+	}
 
 	search(schema,callback,search = {}){
 		return schema.find(search).sort({_id: -1}).exec(callback);

@@ -23,17 +23,18 @@ module.exports.add = (req, res) => {
 			});
 			return;
 		}
+		let urlNew = new Date().getTime() + req.files.file.name;
 
 		let publicidade = {
 			"linkPost": req.body.linkPost,
-			"imagem": '/imagens/' + req.files.file.name,
+			"imagem": '/imagens/' + urlNew,
 			"timePost": req.body.timePost
 		}
 
 		categoria = connectMongoSchemas.createPublicidades(publicidade);
 
 		categoriaModel.add(categoria, (error,result) => {
-			req.files.file.mv('app/public/imagens/' + req.files.file.name, (err) => {
+			req.files.file.mv('app/public/imagens/' + urlNew, (err) => {
 				if (err || error) {
 					res.status(417).json({
 						status: false,
@@ -100,7 +101,7 @@ module.exports.edit = (req, res) => {
 						message: 'Categoria editada com sucesso'
 					});
 				}
-			},{'_id': ObjectId(publicidadeEditId)});
+			});
 		}
 	}
 };
@@ -122,7 +123,7 @@ module.exports.delete = (req, res) => {
 				});
 				return;
 			}
-			fs.unlink('./app/public' + result.imagem, (err) => {
+			fs.unlink('./app/public' + result[0].imagem, (err) => {
 				categoriaModel.delete(connectMongoSchemas.createPublicidades,{"_id" : ObjectId(paramsId)},(error,result)=>{
 					if (!result && err) {
 						res.status(417).json({

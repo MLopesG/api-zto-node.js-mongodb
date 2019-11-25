@@ -9,7 +9,7 @@ class Categorias{
 	};
 
 	delete(schema,where,callback){
-	  	return schema.deleteOne(where,callback);
+	  	return schema.deleteMany(where,callback);
 	};
 
 	view(schema,callback,id = {}){

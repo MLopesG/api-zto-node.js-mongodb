@@ -2,16 +2,6 @@ const router = require('express').Router();
 const controllerUsersAdmin = require('../controllers/usersAdminController.js');
 const { check, validationResult } = require('express-validator');
 
-router.post('/token', controllerUsersAdmin.token);
-
-router.post('/login',
-	[
-		check('email', 'Email é obrigatório').not().isEmpty(),
-		check('senha', 'Senha é obrigatório').not().isEmpty(),
-	],
-	controllerUsersAdmin.login
-);
-
 router.get('/info/:idUsuario', controllerUsersAdmin.view);
 router.get('/', controllerUsersAdmin.view);
 
