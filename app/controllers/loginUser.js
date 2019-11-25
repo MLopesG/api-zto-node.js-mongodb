@@ -85,3 +85,42 @@ module.exports.login = (req, res) => {
 		});
 	}
 };
+
+module.exports.add = (req, res) => {
+	let { check, validationResult } = require('express-validator');
+	let errors = validationResult(req);
+
+	if (!errors.isEmpty()) {
+		res.status(417).json({
+			status: false,
+			validation: errors.array()
+		});
+	} else {
+		usersModel.verifyCPF(connectMongoSchemas.createUsers,req.body.cpf.trim(), (error,result) => {
+			if (result.length > 0) {
+				res.json({
+					status: false,
+					message: 'CPF já sendo utilizado.'
+				});
+			} else {
+
+				req.body.senha = md5(req.body.senha);
+
+				let user = connectMongoSchemas.createUsers(req.body);
+
+				usersModel.add(user, (error,result) => {
+					if(error){
+						res.status(417).json({
+							message: 'Falha ao realizar processo, tente novamente.'
+						});
+					}else{
+						res.json({
+							status: true,
+							message: 'Usuário foi cadastrado com sucesso.'
+						});
+					}	
+				});
+			}
+		});
+	}
+};

@@ -15,15 +15,6 @@ router.put('/edit/:id',
 	controllerUsers.edit
 );
 
-router.post('/cadastrar',
-	[
-		check('nomeCompleto', 'Nome completo é obrigatório').not().isEmpty(),
-		check('senha', 'Senha é obrigatório').not().isEmpty(),
-		check('cpf', 'CPF é obrigatório').not().isEmpty(),
-	],
-	controllerUsers.add
-);
-
 router.delete('/deletar/:id', controllerUsers.delete);
 
 
