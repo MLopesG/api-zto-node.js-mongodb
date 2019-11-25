@@ -18,22 +18,22 @@ module.exports.edit = (req, res) => {
 				message: 'Usuário não encontrada.'
 			});
 		} else {
-			usersModel.view(connectMongoSchemas.createUsers,(error,result) => {
-					if(error){
-						res.json({
-							status: true,
-							user: result
-						});
-					}else{
-						res.status(417).json({
-							status: false,
-							message: 'Usuário não encontrada.'
-						});
-					}
-				},
-				{ 
-					"_id" : ObjectId(userEditId)
-				}  
+			usersModel.view(connectMongoSchemas.createUsers, (error, result) => {
+				if (error) {
+					res.json({
+						status: true,
+						user: result
+					});
+				} else {
+					res.status(417).json({
+						status: false,
+						message: 'Usuário não encontrada.'
+					});
+				}
+			},
+				{
+					"_id": ObjectId(userEditId)
+				}
 			);
 		}
 	} else {
@@ -45,7 +45,7 @@ module.exports.edit = (req, res) => {
 		} else {
 			req.body.senha = md5(req.body.senha);
 
-			usersModel.edit(connectMongoSchemas.createUsers,{"_id": ObjectId(userEditId)},req.body,(error,result)=>{
+			usersModel.edit(connectMongoSchemas.createUsers, { "_id": ObjectId(userEditId) }, req.body, (error, result) => {
 				if (error) {
 					res.json({
 						status: false,
@@ -71,7 +71,7 @@ module.exports.delete = (req, res) => {
 			message: 'Informe usuário para continuar o processo de exclusão.'
 		});
 	} else {
-		usersModel.delete(connectMongoSchemas.createUsers,{"_id" : ObjectId(paramsId)},(error,result)=>{
+		usersModel.delete(connectMongoSchemas.createUsers, { "_id": ObjectId(paramsId) }, (error, result) => {
 			if (error) {
 				res.status(417).json({
 					status: false,
@@ -89,21 +89,21 @@ module.exports.delete = (req, res) => {
 
 module.exports.view = (req, res) => {
 	let idUsuarioFilter = req.params.idUsuario;
-	let filter = !idUsuarioFilter ? {} : {"_id" : ObjectId(idUsuarioFilter)};
+	let filter = !idUsuarioFilter ? {} : { "_id": ObjectId(idUsuarioFilter) };
 
-	usersModel.view(connectMongoSchemas.createUsers,(error,result) => {
-		if(error){
+	usersModel.view(connectMongoSchemas.createUsers, (error, result) => {
+		if (error) {
 			res.status(417).json({
 				status: false,
 				message: 'Falha ao listar usuário.'
 			});
-		}else{
+		} else {
 			res.json({
 				status: true,
 				usuario: result
 			});
 		}
 	},
-	filter
+		filter
 	);
 };

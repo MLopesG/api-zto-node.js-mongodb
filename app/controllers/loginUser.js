@@ -43,7 +43,7 @@ module.exports.login = (req, res) => {
 			validation: errors.array()
 		});
 	} else {
-		usersModel.login(connectMongoSchemas.createUsers,{cpf:req.body.cpf,senha:md5(req.body.senha)}, (error,result) => {
+		usersModel.login(connectMongoSchemas.createUsers, { cpf: req.body.cpf, senha: md5(req.body.senha) }, (error, result) => {
 
 			if (error) {
 				res.status(417).json({
@@ -96,7 +96,7 @@ module.exports.add = (req, res) => {
 			validation: errors.array()
 		});
 	} else {
-		usersModel.verifyCPF(connectMongoSchemas.createUsers,req.body.cpf.trim(), (error,result) => {
+		usersModel.verifyCPF(connectMongoSchemas.createUsers, req.body.cpf.trim(), (error, result) => {
 			if (result.length > 0) {
 				res.json({
 					status: false,
@@ -108,17 +108,17 @@ module.exports.add = (req, res) => {
 
 				let user = connectMongoSchemas.createUsers(req.body);
 
-				usersModel.add(user, (error,result) => {
-					if(error){
+				usersModel.add(user, (error, result) => {
+					if (error) {
 						res.status(417).json({
 							message: 'Falha ao realizar processo, tente novamente.'
 						});
-					}else{
+					} else {
 						res.json({
 							status: true,
 							message: 'Usuário foi cadastrado com sucesso.'
 						});
-					}	
+					}
 				});
 			}
 		});

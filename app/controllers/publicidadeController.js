@@ -3,6 +3,25 @@ const connectMongoSchemas = require('../../config/connect');
 const fs = require('fs');
 let ObjectId = require('mongodb').ObjectID;
 
+module.exports.view = (req, res) => {
+	let idPublicidadeFilter = req.params.idPublicidade;
+	let filter = !idPublicidadeFilter ? {} : { '_id': ObjectId(idPublicidadeFilter) };
+
+	categoriaModel.view(connectMongoSchemas.createPublicidades, (error, result) => {
+		if (error) {
+			res.status(417).json({
+				status: false,
+				message: 'Falha ao listar publicidade.'
+			});
+		} else {
+			res.json({
+				status: true,
+				publicidades: result
+			});
+		}
+	}, filter);
+};
+
 module.exports.add = (req, res) => {
 	let { check, validationResult } = require('express-validator');
 	let errors = validationResult(req);
@@ -33,7 +52,7 @@ module.exports.add = (req, res) => {
 
 		categoria = connectMongoSchemas.createPublicidades(publicidade);
 
-		categoriaModel.add(categoria, (error,result) => {
+		categoriaModel.add(categoria, (error, result) => {
 			req.files.file.mv('app/public/imagens/' + urlNew, (err) => {
 				if (err || error) {
 					res.status(417).json({
@@ -66,20 +85,20 @@ module.exports.edit = (req, res) => {
 				message: 'Publicidade não encontrada.'
 			});
 		} else {
-			categoriaModel.view(connectMongoSchemas.createPublicidades,(error,result) => {
-				if(error){
+			categoriaModel.view(connectMongoSchemas.createPublicidades, (error, result) => {
+				if (error) {
 					res.json({
 						status: true,
 						categoria: result.val()
 					});
-				}else{
+				} else {
 					res.status(417).json({
 						status: false,
 						message: 'Publicidade não encontrada.'
 					});
 				}
 			},
-				{'_id': ObjectId(publicidadeEditId)}
+				{ '_id': ObjectId(publicidadeEditId) }
 			);
 		}
 	} else {
@@ -89,7 +108,7 @@ module.exports.edit = (req, res) => {
 				validation: errors.array()
 			});
 		} else {
-			categoriaModel.edit(connectMongoSchemas.createPublicidades,{'_id': ObjectId(publicidadeEditId)}, req.body,(error,result)=>{
+			categoriaModel.edit(connectMongoSchemas.createPublicidades, { '_id': ObjectId(publicidadeEditId) }, req.body, (error, result) => {
 				if (error) {
 					res.json({
 						status: false,
@@ -115,7 +134,7 @@ module.exports.delete = (req, res) => {
 			message: 'Informe categoria para continuar o processo de exclusão.'
 		});
 	} else {
-		categoriaModel.view(connectMongoSchemas.createPublicidades,(errorView,result) => {
+		categoriaModel.view(connectMongoSchemas.createPublicidades, (errorView, result) => {
 			if (errorView) {
 				res.status(417).json({
 					status: false,
@@ -124,7 +143,7 @@ module.exports.delete = (req, res) => {
 				return;
 			}
 			fs.unlink('./app/public' + result[0].imagem, (err) => {
-				categoriaModel.delete(connectMongoSchemas.createPublicidades,{"_id" : ObjectId(paramsId)},(error,result)=>{
+				categoriaModel.delete(connectMongoSchemas.createPublicidades, { "_id": ObjectId(paramsId) }, (error, result) => {
 					if (!result && err) {
 						res.status(417).json({
 							status: false,
@@ -138,25 +157,6 @@ module.exports.delete = (req, res) => {
 					}
 				});
 			});
-		},{'_id': ObjectId(paramsId)});
+		}, { '_id': ObjectId(paramsId) });
 	}
-};
-
-module.exports.view = (req, res) => {
-	let idPublicidadeFilter = req.params.idPublicidade;
-	let filter = !idPublicidadeFilter ? {} : {'_id': ObjectId(idPublicidadeFilter)};
-
-	categoriaModel.view(connectMongoSchemas.createPublicidades,(error,result) => {
-		if(error){
-			res.status(417).json({
-				status: false,
-				message: 'Falha ao listar publicidade.'
-			});
-		}else{
-			res.json({
-				status: true,
-				publicidades: result
-			});
-		}
-	}, filter);
 };

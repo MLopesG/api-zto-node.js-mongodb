@@ -1,6 +1,6 @@
 class ConfigAdmin {
-	dropDatabase(schema,callback){
-	   return schema.remove(callback);
+	dropDatabase(schema, callback) {
+		return schema.remove(callback);
 	};
 }
 

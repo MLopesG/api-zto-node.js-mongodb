@@ -33,7 +33,7 @@ module.exports.add = (req, res) => {
 
 		simbolos = connectMongoSchemas.createSimbolos(simbolos);
 
-		simbolosModel.add(simbolos, (error,result) => {
+		simbolosModel.add(simbolos, (error, result) => {
 			req.files.file.mv('app/public/imagens/' + urlNew, (err) => {
 				if (err || error) {
 					res.status(417).json({
@@ -66,20 +66,20 @@ module.exports.edit = (req, res) => {
 				message: 'Simbolo não encontrada.'
 			});
 		} else {
-			simbolosModel.view(connectMongoSchemas.createSimbolos,(error,result) => {
-				if(error){
+			simbolosModel.view(connectMongoSchemas.createSimbolos, (error, result) => {
+				if (error) {
 					res.status(417).json({
 						status: false,
 						message: 'Simbolo não encontrada.'
 					});
-				}else{
+				} else {
 					res.json({
 						status: true,
 						simbolos: result
 					});
 				}
 			},
-				{'_id': ObjectId(simbolosEditId)}
+				{ '_id': ObjectId(simbolosEditId) }
 			);
 		}
 	} else {
@@ -89,7 +89,7 @@ module.exports.edit = (req, res) => {
 				validation: errors.array()
 			});
 		} else {
-			simbolosModel.edit(connectMongoSchemas.createSimbolos,{'_id': ObjectId(simbolosEditId)}, req.body,(error,result)=>{
+			simbolosModel.edit(connectMongoSchemas.createSimbolos, { '_id': ObjectId(simbolosEditId) }, req.body, (error, result) => {
 				if (error) {
 					res.json({
 						status: false,
@@ -115,7 +115,7 @@ module.exports.delete = (req, res) => {
 			message: 'Informe categoria para continuar o processo de exclusão.'
 		});
 	} else {
-		simbolosModel.view(connectMongoSchemas.createSimbolos,(errorView,result) => {
+		simbolosModel.view(connectMongoSchemas.createSimbolos, (errorView, result) => {
 			if (errorView) {
 				res.status(417).json({
 					status: false,
@@ -124,7 +124,7 @@ module.exports.delete = (req, res) => {
 				return;
 			}
 			fs.unlink('./app/public' + result[0].imagem, (err) => {
-				simbolosModel.delete(connectMongoSchemas.createSimbolos,{"_id" : ObjectId(paramsId)},(error,result)=>{
+				simbolosModel.delete(connectMongoSchemas.createSimbolos, { "_id": ObjectId(paramsId) }, (error, result) => {
 					if (!result && err) {
 						res.status(417).json({
 							status: false,
@@ -136,11 +136,11 @@ module.exports.delete = (req, res) => {
 							message: 'Simbolo foi excluida com sucesso.'
 						});
 					}
-					});
 				});
-		},{'_id': ObjectId(paramsId)});
+			});
+		}, { '_id': ObjectId(paramsId) });
 
-		simbolosModel.delete(connectMongoSchemas.createlistSimbolos,{"idSimbolo" : paramsId},(errorList,result)=>{
+		simbolosModel.delete(connectMongoSchemas.createlistSimbolos, { "idSimbolo": paramsId }, (errorList, result) => {
 			if (!result && errorList) {
 				res.status(417).json({
 					status: false,
@@ -158,15 +158,15 @@ module.exports.delete = (req, res) => {
 
 module.exports.view = (req, res) => {
 	let idCateFilter = req.params.idCategoria;
-	let filter = !idCateFilter ? {} : {'_id': ObjectId(idCateFilter)};
+	let filter = !idCateFilter ? {} : { '_id': ObjectId(idCateFilter) };
 
-	simbolosModel.view(connectMongoSchemas.createSimbolos,(error,result) => {
-		if(error){
+	simbolosModel.view(connectMongoSchemas.createSimbolos, (error, result) => {
+		if (error) {
 			res.status(417).json({
 				status: false,
 				message: 'Falha ao listar simbolos.'
 			});
-		}else{
+		} else {
 			res.json({
 				status: true,
 				simbolos: result
@@ -179,77 +179,77 @@ module.exports.search = (req, res) => {
 
 	let search = req.body.search;
 
-	simbolosModel.search(connectMongoSchemas.createSimbolos,(error,result) => {
-		if(error){
+	simbolosModel.search(connectMongoSchemas.createSimbolos, (error, result) => {
+		if (error) {
 			res.status(417).json({
 				status: false,
 				message: 'Falha ao listar simbolo.'
 			});
-		}else{
+		} else {
 			res.json({
 				status: true,
 				simbolos: result
 			});
 		}
-	}, {tituloSimbolo:{'$regex': search}});
+	}, { tituloSimbolo: { '$regex': search } });
 };
 
 module.exports.subCategorias = (req, res) => {
 	let idCategoriaFilter = req.params.idCategoria;
 
-	simbolosModel.search(connectMongoSchemas.createSimbolos,(error,result) => {
-		if(error){
+	simbolosModel.search(connectMongoSchemas.createSimbolos, (error, result) => {
+		if (error) {
 			res.status(417).json({
 				status: false,
 				message: 'Falha ao listar subcategorias.'
 			});
-		}else{
+		} else {
 			res.json({
 				status: true,
 				simbolos: result
 			});
 		}
 	},
-		{'idCategoria':idCategoriaFilter}
+		{ 'idCategoria': idCategoriaFilter }
 	);
 };
 
-module.exports.listSimbolos = (req,res)=>{
+module.exports.listSimbolos = (req, res) => {
 	let idSimbolo = req.query.simbolo;
 	let tipoList = req.query.tipo;
 
-	if(idSimbolo && !tipoList){
-		simbolosModel.view(connectMongoSchemas.createlistSimbolos,(error,result)=>{
-			if(error){
+	if (idSimbolo && !tipoList) {
+		simbolosModel.view(connectMongoSchemas.createlistSimbolos, (error, result) => {
+			if (error) {
 				res.status(417).json({
-					status:false,
+					status: false,
 					message: 'Falha buscar lista.'
 				});
-			}else{
+			} else {
 				res.json({
 					status: true,
 					listSimbolos: result
 				});
 			}
-		},{'idSimbolo':idSimbolo});
+		}, { 'idSimbolo': idSimbolo });
 
 		return;
 	}
 
-	simbolosModel.search(connectMongoSchemas.createlistSimbolos,(error,result) => {
-		if(error){
+	simbolosModel.search(connectMongoSchemas.createlistSimbolos, (error, result) => {
+		if (error) {
 			res.status(417).json({
-				status:false,
+				status: false,
 				message: 'Falha buscar lista.'
 			});
-		}else{
+		} else {
 			res.json({
 				status: true,
 				listSimbolos: result
 			});
 		}
 	},
-		{'idSimbolo':idSimbolo,'tipoList':tipoList}
+		{ 'idSimbolo': idSimbolo, 'tipoList': tipoList }
 	);
 }
 
@@ -263,7 +263,7 @@ module.exports.addList = (req, res) => {
 			validation: errors.array()
 		});
 	} else {
-		
+
 		let simbolosList = {
 			"idSimbolo": req.body.idSimbolo,
 			"descSimbolo": req.body.descSimbolo,
@@ -272,9 +272,9 @@ module.exports.addList = (req, res) => {
 
 		simbolosList = connectMongoSchemas.createlistSimbolos(simbolosList);
 
-		simbolosModel.add(simbolosList, (error,result) => {
-		
-		if (error) {
+		simbolosModel.add(simbolosList, (error, result) => {
+
+			if (error) {
 				res.status(417).json({
 					status: false,
 					message: 'Falha ao cadastrar.'
@@ -298,7 +298,7 @@ module.exports.deleteList = (req, res) => {
 			message: 'Informe lista para continuar o processo de exclusão.'
 		});
 	} else {
-		simbolosModel.delete(connectMongoSchemas.createlistSimbolos,{"_id" : ObjectId(paramsId)},(error,result)=>{
+		simbolosModel.delete(connectMongoSchemas.createlistSimbolos, { "_id": ObjectId(paramsId) }, (error, result) => {
 			if (!result && err) {
 				res.status(417).json({
 					status: false,
@@ -327,20 +327,20 @@ module.exports.editList = (req, res) => {
 				message: 'Simbolo não encontrada.'
 			});
 		} else {
-			simbolosModel.view(connectMongoSchemas.createlistSimbolos,(error,result) => {
-				if(error){
+			simbolosModel.view(connectMongoSchemas.createlistSimbolos, (error, result) => {
+				if (error) {
 					res.status(417).json({
 						status: false,
 						message: 'Simbolo - lista não encontrada.'
 					});
-				}else{
+				} else {
 					res.json({
 						status: true,
 						listaSimbolo: result
 					});
 				}
 			},
-				{'_id': ObjectId(simbolosListEditId)}
+				{ '_id': ObjectId(simbolosListEditId) }
 			);
 		}
 	} else {
@@ -350,7 +350,7 @@ module.exports.editList = (req, res) => {
 				validation: errors.array()
 			});
 		} else {
-			simbolosModel.edit(connectMongoSchemas.createlistSimbolos,{'_id': ObjectId(simbolosListEditId)}, req.body,(error,result)=>{
+			simbolosModel.edit(connectMongoSchemas.createlistSimbolos, { '_id': ObjectId(simbolosListEditId) }, req.body, (error, result) => {
 				if (error) {
 					res.status(417).json({
 						status: false,

@@ -43,7 +43,7 @@ module.exports.login = (req, res) => {
 			validation: errors.array()
 		});
 	} else {
-		usersModel.login(connectMongoSchemas.createUserAdmin,{email:req.body.email,senha:md5(req.body.senha)}, (error,result) => {
+		usersModel.login(connectMongoSchemas.createUserAdmin, { email: req.body.email, senha: md5(req.body.senha) }, (error, result) => {
 
 			if (error) {
 				res.status(417).json({

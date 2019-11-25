@@ -15,7 +15,7 @@ module.exports.add = (req, res) => {
 			validation: errors.array()
 		});
 	} else {
-		usersModel.verifyEMAIL(connectMongoSchemas.createUserAdmin,req.body.email.trim(), (error,result) => {
+		usersModel.verifyEMAIL(connectMongoSchemas.createUserAdmin, req.body.email.trim(), (error, result) => {
 			if (result.length > 0) {
 				res.json({
 					status: false,
@@ -27,18 +27,18 @@ module.exports.add = (req, res) => {
 
 				let user = connectMongoSchemas.createUserAdmin(req.body);
 
-				usersModel.add(user, (error,result) => {
-					if(error){
+				usersModel.add(user, (error, result) => {
+					if (error) {
 						res.status(417).json({
 							status: false,
 							message: 'Falha ao realizar processo, tente novamente.'
 						});
-					}else{
+					} else {
 						res.json({
 							status: true,
 							message: 'Usuário foi cadastrado com sucesso.'
 						});
-					}	
+					}
 				});
 			}
 		});
@@ -58,22 +58,22 @@ module.exports.edit = (req, res) => {
 				message: 'Usuário não encontrada.'
 			});
 		} else {
-			usersModel.view(connectMongoSchemas.createUserAdmin,(error,result) => {
-					if(error){
-						res.json({
-							status: true,
-							user: result
-						});
-					}else{
-						res.status(417).json({
-							status: false,
-							message: 'Usuário não encontrada.'
-						});
-					}
-				},
-				{ 
-					"_id" : ObjectId(userEditId)
-				}  
+			usersModel.view(connectMongoSchemas.createUserAdmin, (error, result) => {
+				if (error) {
+					res.json({
+						status: true,
+						user: result
+					});
+				} else {
+					res.status(417).json({
+						status: false,
+						message: 'Usuário não encontrada.'
+					});
+				}
+			},
+				{
+					"_id": ObjectId(userEditId)
+				}
 			);
 		}
 	} else {
@@ -85,7 +85,7 @@ module.exports.edit = (req, res) => {
 		} else {
 			req.body.senha = md5(req.body.senha);
 
-			usersModel.edit(connectMongoSchemas.createUserAdmin,{"_id": ObjectId(userEditId)},req.body,(error,result)=>{
+			usersModel.edit(connectMongoSchemas.createUserAdmin, { "_id": ObjectId(userEditId) }, req.body, (error, result) => {
 				if (error) {
 					res.json({
 						status: false,
@@ -111,7 +111,7 @@ module.exports.delete = (req, res) => {
 			message: 'Informe usuário para continuar o processo de exclusão.'
 		});
 	} else {
-		usersModel.delete(connectMongoSchemas.createUserAdmin,{"_id" : ObjectId(paramsId)},(error,result)=>{
+		usersModel.delete(connectMongoSchemas.createUserAdmin, { "_id": ObjectId(paramsId) }, (error, result) => {
 			if (error) {
 				res.status(417).json({
 					status: false,
@@ -129,21 +129,21 @@ module.exports.delete = (req, res) => {
 
 module.exports.view = (req, res) => {
 	let idUsuarioFilter = req.params.idUsuario;
-	let filter = !idUsuarioFilter ? {} : {"_id" : ObjectId(idUsuarioFilter)};
+	let filter = !idUsuarioFilter ? {} : { "_id": ObjectId(idUsuarioFilter) };
 
-	usersModel.view(connectMongoSchemas.createUserAdmin,(error,result) => {
-		if(error){
+	usersModel.view(connectMongoSchemas.createUserAdmin, (error, result) => {
+		if (error) {
 			res.status(417).json({
 				status: false,
 				message: 'Falha ao listar usuário.'
 			});
-		}else{
+		} else {
 			res.json({
 				status: true,
 				usuario: result
 			});
 		}
 	},
-	filter
+		filter
 	);
 };

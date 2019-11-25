@@ -33,7 +33,7 @@ module.exports.add = (req, res) => {
 
 		categoria = connectMongoSchemas.createCategorias(categoria)
 
-		categoriaModel.add(categoria, (error,result) => {
+		categoriaModel.add(categoria, (error, result) => {
 			req.files.file.mv('app/public/imagens/' + urlNew, (err) => {
 				if (err || error) {
 					res.status(417).json({
@@ -66,20 +66,20 @@ module.exports.edit = (req, res) => {
 				message: 'Categoria não encontrada.'
 			});
 		} else {
-			categoriaModel.view(connectMongoSchemas.createCategorias,(error,result) => {
-				if(error){
+			categoriaModel.view(connectMongoSchemas.createCategorias, (error, result) => {
+				if (error) {
 					res.status(417).json({
 						status: false,
 						message: 'Categoria não encontrada.'
 					});
-				}else{
+				} else {
 					res.json({
 						status: true,
 						categoria: result
 					});
 				}
 			},
-				{'_id': ObjectId(categoriaEditId)}
+				{ '_id': ObjectId(categoriaEditId) }
 			);
 		}
 	} else {
@@ -89,7 +89,7 @@ module.exports.edit = (req, res) => {
 				validation: errors.array()
 			});
 		} else {
-			categoriaModel.edit(connectMongoSchemas.createCategorias,{'_id': ObjectId(categoriaEditId)}, req.body,(error,result)=>{
+			categoriaModel.edit(connectMongoSchemas.createCategorias, { '_id': ObjectId(categoriaEditId) }, req.body, (error, result) => {
 				if (error) {
 					res.json({
 						status: false,
@@ -115,7 +115,7 @@ module.exports.delete = (req, res) => {
 			message: 'Informe categoria para continuar o processo de exclusão.'
 		});
 	} else {
-		categoriaModel.view(connectMongoSchemas.createCategorias,(errorView,result) => {
+		categoriaModel.view(connectMongoSchemas.createCategorias, (errorView, result) => {
 			if (errorView) {
 				res.status(417).json({
 					status: false,
@@ -124,7 +124,7 @@ module.exports.delete = (req, res) => {
 				return;
 			}
 			fs.unlink('./app/public' + result[0].imagem, (err) => {
-				categoriaModel.delete(connectMongoSchemas.createCategorias,{"_id" : ObjectId(paramsId)},(error,result)=>{
+				categoriaModel.delete(connectMongoSchemas.createCategorias, { "_id": ObjectId(paramsId) }, (error, result) => {
 					if (err && !result) {
 						res.status(417).json({
 							status: false,
@@ -138,9 +138,9 @@ module.exports.delete = (req, res) => {
 					}
 				});
 			});
-		},{'_id': ObjectId(paramsId)});
+		}, { '_id': ObjectId(paramsId) });
 
-		categoriaModel.view(connectMongoSchemas.createSimbolos,(errorView,result) => {
+		categoriaModel.view(connectMongoSchemas.createSimbolos, (errorView, result) => {
 			if (errorView) {
 				res.status(417).json({
 					status: false,
@@ -149,10 +149,10 @@ module.exports.delete = (req, res) => {
 				return;
 			}
 
-			if(result.length == 0) return;
+			if (result.length == 0) return;
 
 			fs.unlink('./app/public' + result[0].imagem, (err) => {
-				categoriaModel.delete(connectMongoSchemas.createSimbolos,{"idCategoria" : ObjectId(paramsId)},(error,result)=>{
+				categoriaModel.delete(connectMongoSchemas.createSimbolos, { "idCategoria": ObjectId(paramsId) }, (error, result) => {
 					if (error && !result) {
 						res.status(417).json({
 							status: false,
@@ -165,7 +165,7 @@ module.exports.delete = (req, res) => {
 						});
 					}
 				});
-				categoriaModel.delete(connectMongoSchemas.createlistSimbolos,{"_id" : ObjectId(result[0]._id)},(error,result)=>{
+				categoriaModel.delete(connectMongoSchemas.createlistSimbolos, { "_id": ObjectId(result[0]._id) }, (error, result) => {
 					if (error && !result) {
 						res.status(417).json({
 							status: false,
@@ -179,20 +179,20 @@ module.exports.delete = (req, res) => {
 					}
 				});
 			});
-		},{'idCategoria': ObjectId(paramsId)});
+		}, { 'idCategoria': ObjectId(paramsId) });
 	}
 };
 
 module.exports.view = (req, res) => {
 	let idCateFilter = req.params.idCategoria;
-	let filter = !idCateFilter ? {} : {'_id': ObjectId(idCateFilter)};
+	let filter = !idCateFilter ? {} : { '_id': ObjectId(idCateFilter) };
 
-	categoriaModel.view(connectMongoSchemas.createCategorias,(error,result) => {
-		if(error){
+	categoriaModel.view(connectMongoSchemas.createCategorias, (error, result) => {
+		if (error) {
 			res.status(417).json({
 				message: 'Falha ao listar usuário.'
 			});
-		}else{
+		} else {
 			res.json({
 				status: true,
 				categoria: result
@@ -205,17 +205,17 @@ module.exports.search = (req, res) => {
 
 	let search = req.body.search;
 
-	categoriaModel.search(connectMongoSchemas.createCategorias,(error,result) => {
-		if(error){
+	categoriaModel.search(connectMongoSchemas.createCategorias, (error, result) => {
+		if (error) {
 			res.status(417).json({
 				status: false,
 				message: 'Falha ao listar usuário.'
 			});
-		}else{
+		} else {
 			res.json({
 				status: true,
 				categoria: result
 			});
 		}
-	}, {categoria:{'$regex': search}});
+	}, { categoria: { '$regex': search } });
 };

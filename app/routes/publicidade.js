@@ -2,9 +2,9 @@ const router = require('express').Router();
 const controllerPublicidade = require('../controllers/publicidadeController.js');
 const { check, validationResult } = require('express-validator');
 
-router.get('/info/:idPublicidade', controllerPublicidade.view);
-
 router.get('/', controllerPublicidade.view);
+
+router.get('/info/:idPublicidade', controllerPublicidade.view);
 
 router.put('/edit/:id',
 	[
