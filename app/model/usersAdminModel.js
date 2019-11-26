@@ -4,7 +4,7 @@ class UsersAdmin {
 	};
 
 	edit(schema, id = {}, user, callback) {
-		return schema.update({}, { $set: user }, callback);
+		return schema.update(id, { $set: user }, callback);
 	};
 
 	delete(schema, where, callback) {
