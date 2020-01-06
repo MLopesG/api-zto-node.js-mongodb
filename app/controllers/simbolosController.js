@@ -131,28 +131,23 @@ module.exports.delete = (req, res) => {
 							message: 'Não foi possivel excluir simbolo, tente novamente.'
 						});
 					} else {
-						res.json({
-							status: true,
-							message: 'Simbolo foi excluida com sucesso.'
+						simbolosModel.delete(connectMongoSchemas.createlistSimbolos, { "idSimbolo": paramsId }, (errorList, result1) => {
+							if (errorList) {
+								res.status(417).json({
+									status: false,
+									message: 'Não foi possivel excluir simbolo, tente novamente.'
+								});
+							} else {
+								res.json({
+									status: true,
+									message: 'Lista de simbolos foi excluida com sucesso.'
+								});
+							}
 						});
 					}
 				});
 			});
 		}, { '_id': ObjectId(paramsId) });
-
-		simbolosModel.delete(connectMongoSchemas.createlistSimbolos, { "idSimbolo": paramsId }, (errorList, result) => {
-			if (!result && errorList) {
-				res.status(417).json({
-					status: false,
-					message: 'Não foi possivel excluir simbolo, tente novamente.'
-				});
-			} else {
-				res.json({
-					status: true,
-					message: 'Lista de simbolos foi excluida com sucesso.'
-				});
-			}
-		});
 	}
 };
 
