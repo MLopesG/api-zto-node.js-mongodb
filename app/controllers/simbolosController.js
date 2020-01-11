@@ -124,14 +124,22 @@ module.exports.delete = (req, res) => {
 				return;
 			}
 			fs.unlink('./app/public' + result[0].imagem, (err) => {
-				simbolosModel.delete(connectMongoSchemas.createSimbolos, { "_id": ObjectId(paramsId) }, (error, result) => {
-					if (!result && err) {
+				simbolosModel.delete(connectMongoSchemas.createSimbolos, { "_id": ObjectId(paramsId) }, (error, result1) => {
+					if (!result1 && error) {
 						res.status(417).json({
 							status: false,
 							message: 'Não foi possivel excluir simbolo, tente novamente.'
 						});
 					} else {
-						simbolosModel.delete(connectMongoSchemas.createlistSimbolos, { "idSimbolo": paramsId }, (errorList, result1) => {
+
+						if(result1.length === 0){
+							return res.json({
+								status: true,
+								message: 'Simbolo foi excluido com sucesso.'
+							});
+						}
+
+						simbolosModel.delete(connectMongoSchemas.createlistSimbolos, { "idSimbolo": paramsId }, (errorList, result2) => {
 							if (errorList) {
 								res.status(417).json({
 									status: false,
@@ -140,7 +148,7 @@ module.exports.delete = (req, res) => {
 							} else {
 								res.json({
 									status: true,
-									message: 'Lista de simbolos foi excluida com sucesso.'
+									message: 'Lista de simbolos e simbolo, foram excluidas com sucesso.'
 								});
 							}
 						});

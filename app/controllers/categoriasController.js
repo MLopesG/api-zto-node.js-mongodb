@@ -125,61 +125,56 @@ module.exports.delete = (req, res) => {
 			}
 			fs.unlink('./app/public' + result[0].imagem, (err) => {
 				categoriaModel.delete(connectMongoSchemas.createCategorias, { "_id": ObjectId(paramsId) }, (error, result) => {
-					if (err && !result) {
+					if (!result && err) {
 						res.status(417).json({
 							status: false,
 							message: 'Não foi possivel excluir categoria, tente novamente.'
 						});
 					} else {
-						res.json({
-							status: true,
-							message: 'Categoria foi excluida com sucesso.'
-						});
+							categoriaModel.view(connectMongoSchemas.createSimbolos, (errorView, result1) => {
+							if (errorView) {
+								res.status(417).json({
+									status: false,
+									message: 'Não foi possivel excluir simbolo, tente novamente.'
+								});
+							}
+
+							if(result1.length === 0){
+								return res.json({
+									status: true,
+									message: 'Categoria excluida sucesso.'
+								});
+							}
+
+							fs.unlink('./app/public' + result1[0].imagem, (err) => {
+								categoriaModel.delete(connectMongoSchemas.createSimbolos, { "_id": ObjectId(paramsId) }, (error, result2) => {
+									if (!result2 && err) {
+										res.status(417).json({
+											status: false,
+											message: 'Não foi possivel excluir simbolo, tente novamente.'
+										});
+									} else {
+										categoriaModel.delete(connectMongoSchemas.createlistSimbolos, { "idSimbolo": paramsId }, (errorList, result3) => {
+											if (errorList) {
+												res.status(417).json({
+													status: false,
+													message: 'Não foi possivel excluir simbolo, tente novamente.'
+												});
+											} else {
+												res.json({
+													status: true,
+													message: 'Categoria, simbolos e lista de soluções e causas, foram excluidas com sucesso.'
+												});
+											}
+										});
+									}
+								});
+							});
+						}, { 'idCategoria': ObjectId(paramsId) });
 					}
 				});
 			});
 		}, { '_id': ObjectId(paramsId) });
-
-		categoriaModel.view(connectMongoSchemas.createSimbolos, (errorView, result) => {
-			if (errorView) {
-				res.status(417).json({
-					status: false,
-					message: 'Não foi possivel excluir categoria, tente novamente.'
-				});
-				return;
-			}
-
-			if (result.length == 0) return;
-
-			fs.unlink('./app/public' + result[0].imagem, (err) => {
-				categoriaModel.delete(connectMongoSchemas.createSimbolos, { "idCategoria": ObjectId(paramsId) }, (error, result) => {
-					if (error && !result) {
-						res.status(417).json({
-							status: false,
-							message: 'Não foi possivel excluir categoria, tente novamente.'
-						});
-					} else {
-						res.json({
-							status: true,
-							message: 'Usuário foi excluida com sucesso.'
-						});
-					}
-				});
-				categoriaModel.delete(connectMongoSchemas.createlistSimbolos, { "_id": ObjectId(result[0]._id) }, (error, result) => {
-					if (error && !result) {
-						res.status(417).json({
-							status: false,
-							message: 'Não foi possivel excluir categoria, tente novamente.'
-						});
-					} else {
-						res.json({
-							status: true,
-							message: 'lista simbolos foi excluida com sucesso.'
-						});
-					}
-				});
-			});
-		}, { 'idCategoria': ObjectId(paramsId) });
 	}
 };
 
