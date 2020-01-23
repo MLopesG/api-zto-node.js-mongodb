@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect("mongodb://localhost:27017/zto", {
+mongoose.connect("mongodb://sosmaquinas01:281120@mongodb.sosmaquinas.kinghost.net/sosmaquinas01", {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then().catch((err) => {
@@ -45,10 +45,6 @@ const usersSchema = new mongoose.Schema({
     telefone: {
         type: String,
         require: true,
-    },
-    senha: {
-        type: String,
-        require: true
     }
 });
 const publicidadesSchema = new mongoose.Schema({

@@ -5,6 +5,8 @@ const cors = require('cors')
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.set('views', __dirname + '/../app/views');
+app.set('view engine', 'ejs');
 app.use(express.static('./app/public'));
 app.use(bodyParser.json());
 app.use(fileUpload());
@@ -26,6 +28,7 @@ const useradmin = require('../app/routes/usersAdmin.js');
 const config = require('../app/routes/config.js');
 const usersSystem = require('../app/routes/userSystem.js');
 const usersAdminSystem = require('../app/routes/adminUserSystem.js');
+const index = require('../app/routes/index.js');
 
 // Carregamanto de rotas.
 
@@ -38,5 +41,6 @@ app.use('/publicidades-publica', publicoPublicidade);
 app.use('/publicidade', authApi, publicidade);
 app.use('/users-admin', authApi, useradmin);
 app.use('/config', authApi, config);
+app.use('/', index);
 
 module.exports = app;

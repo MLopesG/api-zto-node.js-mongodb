@@ -6,13 +6,11 @@ router.get('/info/:idUsuario', controllerUsers.view);
 
 router.get('/', controllerUsers.view);
 
-router.put('/edit/:id',
-	[
-		check('nomeCompleto', 'Nome completo é obrigatório').not().isEmpty(),
-		check('senha', 'Senha é obrigatório').not().isEmpty(),
-		check('cpf', 'CPF é obrigatório').not().isEmpty(),
-	],
-	controllerUsers.edit
+router.put('/edit/:id', [
+        check('nomeCompleto', 'Nome completo é obrigatório').not().isEmpty(),
+        check('cpf', 'cpf é obrigatório').not().isEmpty()
+    ],
+    controllerUsers.edit
 );
 
 router.delete('/deletar/:id', controllerUsers.delete);
