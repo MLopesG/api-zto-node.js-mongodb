@@ -56,6 +56,10 @@ const publicidadesSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
+    empresaCliente: {
+        type: String,
+        require: true,
+    },
     timePost: {
         type: Number,
         require: true,

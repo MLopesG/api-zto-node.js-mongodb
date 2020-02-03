@@ -89,19 +89,69 @@ module.exports.edit = (req, res) => {
 				validation: errors.array()
 			});
 		} else {
-			categoriaModel.edit(connectMongoSchemas.createCategorias, { '_id': ObjectId(categoriaEditId) }, req.body, (error, result) => {
-				if (error) {
-					res.json({
-						status: false,
-						message: 'Não foi possivel realizar alteração, tente novamente.'
-					});
-				} else {
-					res.json({
-						status: true,
-						message: 'Categoria editado com sucesso'
-					});
-				}
-			});
+			let categoriaEdit = {
+				"categoria": req.body.categoria,
+			}
+
+			if(req.files && req.files.file && req.files.file.name != null){;
+				categoriaModel.view(connectMongoSchemas.createCategorias, (error, result) => {
+					if (error) {
+						res.json({
+							status: true,
+							message: 'Categoria não encontrada.'
+						});
+					} else {
+						if(result.length >= 1){
+							fs.unlink('./app/public' + result[0].imagem, (err) => {
+								if(err){
+									console.log(err);
+								}
+							});
+						}
+
+						let urlNew = new Date().getTime() + req.files.file.name;
+
+						req.files.file.mv('app/public/imagens/' + urlNew, (err) => {
+							if (err) {
+								console.log(err);
+							}else{
+								categoriaEdit['imagem'] =  '/imagens/' + urlNew;
+								categoriaModel.edit(connectMongoSchemas.createCategorias, { '_id': ObjectId(categoriaEditId) }, categoriaEdit, (error, result) => {	
+
+									if (error) {
+										return res.json({
+											status: false,
+											message: 'Não foi possivel realizar alteração, tente novamente.'
+										});
+									} else {
+										res.json({
+											status: true,
+											message: 'Categoria editado com sucesso'
+										});
+									}
+								});
+							}
+						});
+					}		
+				},
+					{ '_id': ObjectId(categoriaEditId) }
+				);
+			}else{
+				categoriaModel.edit(connectMongoSchemas.createCategorias, { '_id': ObjectId(categoriaEditId) }, categoriaEdit, (error, result) => {
+					console.log('entrou 1');
+					if (error) {
+						res.json({
+							status: false,
+							message: 'Não foi possivel realizar alteração, tente novamente.'
+						});
+					} else {
+						res.json({
+							status: true,
+							message: 'Categoria editado com sucesso'
+						});
+					}
+				});
+			}
 		}
 	}
 };

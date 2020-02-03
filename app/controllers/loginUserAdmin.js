@@ -43,7 +43,7 @@ module.exports.login = (req, res) => {
 			validation: errors.array()
 		});
 	} else {
-		usersModel.login(connectMongoSchemas.createUserAdmin, { email: req.body.email, senha: md5(req.body.senha) }, (error, result) => {
+		usersModel.login(connectMongoSchemas.createUserAdmin, { email: req.body.email}, (error, result) => {
 
 			if (error) {
 				res.status(417).json({
@@ -56,7 +56,7 @@ module.exports.login = (req, res) => {
 			if (result.length === 0) {
 				res.json({
 					status: false,
-					message: 'Nenhum usuário encontrado'
+					message: 'Nenhum usuário encontrado.'
 				});
 				return;
 			}

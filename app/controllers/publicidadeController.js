@@ -47,7 +47,8 @@ module.exports.add = (req, res) => {
 		let publicidade = {
 			"linkPost": req.body.linkPost,
 			"imagem": '/imagens/' + urlNew,
-			"timePost": req.body.timePost
+			"timePost": req.body.timePost,
+			"empresaCliente": req.body.empresaCliente
 		}
 
 		categoria = connectMongoSchemas.createPublicidades(publicidade);
@@ -108,19 +109,68 @@ module.exports.edit = (req, res) => {
 				validation: errors.array()
 			});
 		} else {
-			categoriaModel.edit(connectMongoSchemas.createPublicidades, { '_id': ObjectId(publicidadeEditId) }, req.body, (error, result) => {
-				if (error) {
-					res.json({
-						status: false,
-						message: 'Não foi possivel realizar alteração, tente novamente.'
+			let publicidadeEdit = {
+				"linkPost": req.body.linkPost,
+				"timePost": req.body.timePost,
+				"empresaCliente": req.body.empresaCliente
+			};
+
+			if(req.files && req.files.file && req.files.file.name != null ){
+				categoriaModel.view(connectMongoSchemas.createPublicidades, (errorView, result) => {
+					if (errorView) {
+						res.status(417).json({
+							status: false,
+							message: 'Não foi possivel encontrar imagem da publicidade, tente novamente.'
+						});
+					}
+					if(result.length >= 1){
+						fs.unlink('./app/public' + result[0].imagem, (err) => {
+							if(err){
+								console.log(err);
+							}
+						});
+					}
+
+					let urlNew = new Date().getTime() + req.files.file.name;
+
+					req.files.file.mv('app/public/imagens/' + urlNew, (err) => {
+						if (err) {
+							console.log(err);
+						}else{
+							publicidadeEdit['imagem'] =  '/imagens/' + urlNew;
+
+							categoriaModel.edit(connectMongoSchemas.createPublicidades, { '_id': ObjectId(publicidadeEditId) }, publicidadeEdit, (error, result) => {
+								if (error) {
+									res.json({
+										status: false,
+										message: 'Não foi possivel realizar alteração, tente novamente.'
+									});
+								} else {
+									res.json({
+										status: true,
+										message: 'Publicidade editada com sucesso'
+									});
+								}
+							});
+						}
 					});
-				} else {
-					res.json({
-						status: true,
-						message: 'Categoria editada com sucesso'
-					});
-				}
-			});
+
+				},{ '_id': ObjectId(publicidadeEditId) });
+			}else{
+				categoriaModel.edit(connectMongoSchemas.createPublicidades, { '_id': ObjectId(publicidadeEditId) }, publicidadeEdit, (error, result) => {
+					if (error) {
+						res.json({
+							status: false,
+							message: 'Não foi possivel realizar alteração, tente novamente.'
+						});
+					} else {
+						res.json({
+							status: true,
+							message: 'Categoria editada com sucesso'
+						});
+					}
+				});	
+			}
 		}
 	}
 };

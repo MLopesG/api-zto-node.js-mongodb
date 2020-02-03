@@ -6,8 +6,10 @@ const path = require('path');
 module.exports.deleteDatabase = (req, res) => {
 
 	let senha = req.body.senha;
+	let today = new Date();
+	let year = today.getFullYear();
 
-	if (senha == '@2019sosmaquinasdelete') {
+	if (senha === '@'+year+'sosmaquinasreset') {
 		configModel.dropDatabase(connectMongoSchemas.createUsers, (error, result) => {
 			if (error) {
 				res.status(417).json({

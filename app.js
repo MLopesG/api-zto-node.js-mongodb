@@ -1,5 +1,6 @@
 const server = require('./config/server.js');
+const port = 8082;
 
-server.listen(3000, () => {
-    console.log('Servidor inicializado na porta:3000');
+server.listen(port, () => {
+    console.log("Servidor inicializado na porta: " + port);
 });

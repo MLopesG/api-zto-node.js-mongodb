@@ -5,7 +5,7 @@ const config = require('../../secret.js');
 const md5 = require('md5');
 
 module.exports.token = (req, res, next) => {
-    let token = req.headers['authorization'];
+    let token = req.headers['Authorization'];
 
     if (token) {
         if (token.startsWith('Bearer')) {
@@ -56,7 +56,7 @@ module.exports.login = (req, res) => {
             if (result.length === 0) {
                 res.json({
                     status: false,
-                    message: 'Nenhum usuário encontrado'
+                    message: 'Nenhum usuário encontrado, verifique o CPF digitado'
                 });
                 return;
             }

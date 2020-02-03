@@ -9,7 +9,8 @@ router.get('/info/:idPublicidade', controllerPublicidade.view);
 router.put('/edit/:id',
 	[
 		check('linkPost', 'Link da postagem redirecionamento é obrigatório').not().isEmpty(),
-		check('timePost', 'Time da postagem é obrigatório').not().isEmpty()
+		check('timePost', 'Time da postagem é obrigatório').not().isEmpty(),
+		check('empresaCliente', 'Empresa/cliente é obrigatório').not().isEmpty()
 	],
 	controllerPublicidade.edit
 );
@@ -17,7 +18,8 @@ router.put('/edit/:id',
 router.post('/cadastrar',
 	[
 		check('linkPost', 'Link da postagem redirecionamento é obrigatório').not().isEmpty(),
-		check('timePost', 'Time da postagem é obrigatório').not().isEmpty()
+		check('timePost', 'Time da postagem é obrigatório').not().isEmpty(),
+		check('empresaCliente', 'Empresa/cliente é obrigatório').not().isEmpty()
 	],
 	controllerPublicidade.add
 );

@@ -89,19 +89,68 @@ module.exports.edit = (req, res) => {
 				validation: errors.array()
 			});
 		} else {
-			simbolosModel.edit(connectMongoSchemas.createSimbolos, { '_id': ObjectId(simbolosEditId) }, req.body, (error, result) => {
-				if (error) {
-					res.json({
-						status: false,
-						message: 'Não foi possivel realizar alteração, tente novamente.'
-					});
-				} else {
-					res.json({
-						status: true,
-						message: 'Simbolo editado com sucesso'
-					});
-				}
-			});
+			let simbolosEdit = {
+				"descricaoSimbolo": req.body.descricaoSimbolo,
+				"idCategoria": req.body.idCategoria,
+				"tituloSimbolo": req.body.tituloSimbolo
+			}
+
+			if(req.files && req.files.file && req.files.file.name != null){
+				simbolosModel.view(connectMongoSchemas.createSimbolos, (errorView, result) => {
+					if (errorView) {
+						res.status(417).json({
+							status: false,
+							message: 'Não foi possivel encontrar imagem da Simbolo, tente novamente.'
+						});
+					}else{
+						if(result.length >= 1){
+							fs.unlink('./app/public' + result[0].imagem, (err) => {
+								if(err){
+									console.log(err);
+								}
+							});
+						}
+
+						let urlNew = new Date().getTime() + req.files.file.name;
+
+						req.files.file.mv('app/public/imagens/' + urlNew, (err) => {
+							if (err) {
+								console.log(err);
+							}else{
+								simbolosEdit['imagem'] =  '/imagens/' + urlNew;
+
+								simbolosModel.edit(connectMongoSchemas.createSimbolos, { '_id': ObjectId(simbolosEditId) },simbolosEdit, (error, result) => {
+									if (error) {
+										res.json({
+											status: false,
+											message: 'Não foi possivel realizar alteração, tente novamente.'
+										});
+									} else {
+										res.json({
+											status: true,
+											message: 'Simbolo editado com sucesso'
+										});
+									}
+								});
+							}
+						});	
+					}
+				},{ '_id': ObjectId(simbolosEditId)});
+			}else{
+				simbolosModel.edit(connectMongoSchemas.createSimbolos, { '_id': ObjectId(simbolosEditId) },simbolosEdit, (error, result) => {
+					if (error) {
+						res.json({
+							status: false,
+							message: 'Não foi possivel realizar alteração, tente novamente.'
+						});
+					} else {
+						res.json({
+							status: true,
+							message: 'Simbolo editado com sucesso'
+						});
+					}
+				});
+			}
 		}
 	}
 };
