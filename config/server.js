@@ -5,8 +5,6 @@ const cors = require('cors')
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.set('views', __dirname + '/../app/views');
-app.set('view engine', 'ejs');
 app.use(express.static('./app/public'));
 app.use(bodyParser.json());
 app.use(fileUpload());
@@ -16,6 +14,13 @@ app.use(fileUpload());
 const authApi = require('../auth.js');
 
 app.use(cors());
+
+app.use(function(req, res, next) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    next();
+});
 
 // controllers.
 

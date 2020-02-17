@@ -7,7 +7,8 @@ module.exports = (req, res, next) => {
     if (token.startsWith('Bearer')) {
       token = token.slice(7, token.length);
     }
-    jwt.verify(token, config.secret, (err, decoded) => {
+    jwt.verify(token, config.secret,
+      { expiresIn: '12h'}, (err, decoded) => {
       if (err) {
          res.status(417).json({
           success: false,
